@@ -12,6 +12,9 @@ if (!isset($_SESSION['cities'])) {
 
 // Проверка отправляется ли форма
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if (isset($_POST["action"]) && $_POST["action"] == "clear"){
+        $_SESSION['cities'] = ['Paris'];
+    }
     $city = $_POST["city"] ?? '';
     if(!empty($city)){
         $weatherData = getWeatherData($city, $apiKey);
@@ -19,7 +22,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($weatherData && isset($weatherData['cod']) && $weatherData["cod"] != 200){
             $error = $weatherData['message'];
         } else {
-            $_SESSION['weatherData'] = $weatherData;
+            if (!in_array($city, $_SESSION['cities'])) {
+                // array_unshift если не сможем с помощью флекса поменять напрвеление
+                array_push($_SESSION['cities'], $city);
+            } elseif (in_array(mb_strtolower($city), $_SESSION['cities'])) {
+                //$_SESSION['weatherData'] = $weatherData;
+                array_diff($_SESSION['cities'],[mb_strtolower($city)]);
+                array_values($_SESSION['cities']);
+                array_push($_SESSION['cities'], mb_strtolower($city));
+            }
         }
     } else {
         $error = "Please enter a city";
