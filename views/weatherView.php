@@ -2,15 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Météo avec Macron</title>
+    <title>MacronWeather</title>
     <link rel="stylesheet" href="../styles/style.css">
 </head>
 <body>
-    <h1>Météo avec Macron</h1>
+    <h1>Weather with Macron</h1>
     <form method="post" action="../controller/indexController.php">
-        <label for="city">Введите город</label>
-        <input type="text" id="city" name="city" placeholder="Город">
-        <button type="submit">Узнать погоду</button>
+        <label for="city">Put a city</label>
+        <input type="text" id="city" name="city" placeholder="ex Paris">
+        <button type="submit">Check the weather</button>
     </form>
     <form method="post" action="../controller/indexController.php">
         <button type="submit">Clear</button>
@@ -30,9 +30,9 @@
                 echo '<div><img src="../media/macronBase.png" alt="Макрон" class="macron-img"></div>';
                 echo '<div class="weather-info">';
                 echo '<h2>' . htmlspecialchars($city) . '</h2>';
-                echo '<p>Температура: ' . htmlspecialchars($weatherData['main']['temp']) . '°C</p>';
-                echo '<p>Погода: ' . htmlspecialchars($weatherData['weather'][0]['description']) . '</p>';
-                echo '<p>Влажность: ' . htmlspecialchars($weatherData['main']['humidity']) . '%</p>';
+                echo '<p>Temperature: ' . htmlspecialchars($weatherData['main']['temp']) . '°C</p>';
+                echo '<p>Weather: ' . htmlspecialchars($weatherData['weather'][0]['description']) . '</p>';
+                echo '<p>Humidity: ' . htmlspecialchars($weatherData['main']['humidity']) . '%</p>';
                 echo '</div></div>';
 
                 // Прогноз на 7 дней (заглушка)
