@@ -22,15 +22,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($weatherData && isset($weatherData['cod']) && $weatherData["cod"] != 200){
             $error = $weatherData['message'];
         } else {
-            if (!in_array($city, $_SESSION['cities'])) {
-                // array_unshift если не сможем с помощью флекса поменять напрвеление
-                array_push($_SESSION['cities'], $city);
-            } elseif (in_array(mb_strtolower($city), $_SESSION['cities'])) {
-                //$_SESSION['weatherData'] = $weatherData;
-                array_diff($_SESSION['cities'],[mb_strtolower($city)]);
-                array_values($_SESSION['cities']);
-                array_push($_SESSION['cities'], mb_strtolower($city));
+            $cityLower = strtolower($city);
+            $index = false;
+
+            foreach ($_SESSION['cities'] as $i => $cityExist) {
+                if ($cityLower === strtolower($cityExist)) {
+                    $index = $i;
+                    break;
+                }
             }
+
+            if ($index !== false) {
+                unset($_SESSION['cities'][$index]);
+                $_SESSION['cities'] = array_values($_SESSION['cities']);
+            }
+            // array_unshift если не сможем с помощью флекса поменять напрвеление
+            array_push($_SESSION['cities'], $city);
         }
     } else {
         $error = "Please enter a city";
