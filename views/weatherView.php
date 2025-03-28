@@ -28,25 +28,33 @@
             $weatherData = getWeatherData($city, $apiKey);
             if ($weatherData && $weatherData['cod'] == 200) {
                 echo '<div class="weather-card">';
-                echo '<div class="weather-content">';
-                echo '<div><img src="../media/macronBase.png" alt="Макрон" class="macron-img"></div>';
-                echo '<div class="weather-info">';
-                echo '<h2>' . htmlspecialchars(strtoupper($city[0]) . substr(strtolower($city), 1)) . '</h2>';
-                echo '<p>Temperature: ' . htmlspecialchars($weatherData['main']['temp']) . '°C</p>';
-                echo '<p>Weather: ' . htmlspecialchars($weatherData['weather'][0]['description']) . '</p>';
-                echo '<p>Humidity: ' . htmlspecialchars($weatherData['main']['humidity']) . '%</p>';
-                echo '</div></div>';
-
-                // Прогноз на 7 дней (заглушка)
-                echo '<div class="forecast">';
-                /*for ($i = 0; $i < 7; $i++) {
-                    $day = date('D', strtotime("+$i days"));
-                    echo '<div class="forecast-day">';
-                    echo '<span>' . $day . '</span>';
-                    echo '<span>Min: --°C / Max: --°C</span>';
+                    echo '<div id="macron">';
+                        echo '<img src="../media/macronBase.png" alt="Макрон" class="macron-img">';
                     echo '</div>';
-                }*/
-                echo '</div>';
+                    echo '<div class="weather-content">';
+                        echo '<h2>' . htmlspecialchars(strtoupper($city[0]) . substr(strtolower($city), 1)) . '</h2>';
+                        echo '<div class="weather-info">';
+                            echo '<article class="section-article-temp">';
+                                echo '<p>Temperature: ' . htmlspecialchars(round($weatherData['main']['temp'])) . '°C</p>';
+                                echo '<img src="">'; // Laissez l'attribut src vide comme dans votre code
+                            echo '</article>';
+                            echo '<article class="section-article-weather">';
+                                echo '<p>Weather: ' . htmlspecialchars($weatherData['weather'][0]['description']) . '</p>';
+                            echo '</article>';
+                            echo '<article class="section-article-humidity">';
+                                echo '<p>Humidity: ' . htmlspecialchars($weatherData['main']['humidity']) . '%</p>';
+                            echo '</article>';
+                            echo '<article class="section-article-windspeed">';
+                                echo '<p>Wind: ' . htmlspecialchars(number_format($weatherData['wind']['speed'], 1)) . '</p>';
+                            echo '</article>';
+                            echo '<article class="weather-for-allday">';
+                                echo '<span>Just hello world)</span>';
+                            echo '</article>';
+                            echo '<article class="weather-for-week">';
+                                echo '<span>Just hello world)</span>';
+                            echo '</article>';
+                        echo '</div>';
+                    echo '</div>';
                 echo '</div>';
             } else {
                 echo '<div class="weather-card"><p>Не удалось загрузить данные для ' . htmlspecialchars($city) . '</p></div>';
