@@ -122,7 +122,10 @@ form+form>button {
     height: auto;
 }
 
-
+.weather-img {
+    width: 50px;
+    height: auto;
+}
 
 
 
