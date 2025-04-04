@@ -29,6 +29,19 @@
             $weatherData = getWeatherData($city, $apiKey);
             // Если удалось, то показываем контейнер
             if ($weatherData && $weatherData['cod'] == 200) {
+                $cityLower = strtolower($city);
+                if (!isset($_SESSION['coords'][$cityLower])) {
+                    $_SESSION['coords'][$cityLower] = [
+                            'lat' => $weatherData['coord']['lat'],
+                            'lon' => $weatherData['coord']['lon'],
+                    ];
+                }
+
+                $lat = $_SESSION['coords'][$cityLower]['lat'];
+                $lon = $_SESSION['coords'][$cityLower]['lon'];
+                $forecastData = getForecastData($lat, $lon, $apiKey);
+
+
                 echo '<div class="weather-card">';
                     echo '<div id="macron">';
                         echo '<img src="../media/macronBase.png" alt="Макрон" class="macron-img">';
@@ -39,10 +52,12 @@
                         echo '<div class="weather-info">';
                             echo '<article class="section-article-temp">';
                                 // Показываем температуру плюс тут округление с помощью round()
-                                echo '<p>Temperature: ' . htmlspecialchars(round($weatherData['main']['temp'])) . '°C</p>';
+                                echo '<p>Temperature</p>';
+                                echo  '<p>' . htmlspecialchars(round($weatherData['main']['temp'])) . '°C</p>';
                             echo '</article>';
+
                             echo '<article class="section-article-weather">';
-                                // Выбираем картинку для отображение погоды которая сейчас с помощью сравнения
+                                // Выбираем картинку для отображения погоды которая сейчас с помощью сравнения
                                 // Например если у нас clear sky то показываем картинку солнечно и тд
                                 echo '<p>Weather: ' . htmlspecialchars($weatherData['weather'][0]['description']) . '</p>';
                                 if ($weatherData['weather'][0]['description'] === 'clear sky')
@@ -55,18 +70,88 @@
                                 */
                                 elseif (str_contains($weatherData['weather'][0]['description'], 'snow'))
                                     echo '<img src="../media/snowy.png" alt="Snow" class="weather-img">';
+                                elseif (str_contains($weatherData['weather'][0]['description'], 'rain'))
+                                    echo '<img src="../media/rain.png" alt="Rain" class="weather-img">';
                             echo '</article>';
+
                             echo '<article class="section-article-humidity">';
-                                echo '<p>Humidity: ' . htmlspecialchars($weatherData['main']['humidity']) . '%</p>';
+                                echo '<p>Humidity</p>';
+                                echo '<p>' . htmlspecialchars($weatherData['main']['humidity']) . '%</p>';
                             echo '</article>';
+
                             echo '<article class="section-article-windspeed">';
-                                echo '<p>Wind: ' . htmlspecialchars(number_format($weatherData['wind']['speed'], 1)) . '</p>';
+                                echo '<p>Wind</p>';
+                                echo '<p>' . htmlspecialchars(number_format($weatherData['wind']['speed'], 1)) . '</p>';
                             echo '</article>';
+
+
                             echo '<article class="weather-for-allday">';
-                                echo '<span>Just hello world)</span>';
-                            echo '</article>';
+                                echo '<span>Today at</span>';
+                                echo '<div class="weather-forecast">';
+                                    if ($forecastData && $forecastData['cod'] == 200) {
+                                        $today = date('Y-m-d');
+                                        $hourlyForecast = array_filter($forecastData['list'], function ($item) use ($today)
+                                        {
+                                            return str_starts_with($item['dt_txt'], $today);
+                                        });
+                                        foreach ($hourlyForecast as $hour) {
+                                            echo '<div class="weather-forecast-item">';
+                                            echo    '<p>' . date('H:i', $hour['dt']) . '</p>';
+                                            echo    '<p>' . htmlspecialchars(round($hour['main']['temp'])) . '°C' . '</p>';
+                                            echo '</div>';
+                                        }
+                                    } else {
+                                        echo '<p>Weather not disponible</p>';
+
+                                    }
+                                    echo '</article>';
+                                echo '</div>';
+
+
                             echo '<article class="weather-for-week">';
-                                echo '<span>Just hello world)</span>';
+                                echo '<span>This week</span>';
+                                echo '<div class="weather-forecast">';
+                                    if ($forecastData && $forecastData['cod'] == 200) {
+                                        $dailyForecast = [];
+
+                                        foreach ($forecastData['list'] as $item) {
+                                            $date = date('Y-m-d', $item['dt']);
+                                            if (!isset($dailyForecast[$date])) {
+                                                $dailyForecast[$date] = [
+                                                    'temp' => 0,
+                                                    'count' => 0,
+                                                    'description' => '',
+                                                ];
+                                            }
+                                            $dailyForecast[$date]['temp'] += $item['main']['temp'];
+                                            $dailyForecast[$date]['count']++;
+                                            $dailyForecast[$date]['description'] .= htmlspecialchars($item['weather'][0]['description']);
+                                        }
+
+                                        $dailyAverages = [];
+                                        foreach ($dailyForecast as $date => $data) {
+                                            $dailyAverages[$date] = [
+                                                'temp' => round($data['temp'] / $data['count']),
+                                                'description' => htmlspecialchars($data['description']),
+                                            ];
+                                        }
+                                        $indexDays = 0;
+                                        foreach (array_slice($dailyAverages, 0, 5) as $date => $data) {
+                                            echo '<div class="weather-forecast-item">';
+                                                if (isset($indexDays) && $indexDays === 0) {
+                                                    echo '<p>Tommorow</p>';
+                                                    $indexDays++;
+                                                } else {
+                                                    echo '<p>' . date('d.m', strtotime($date)) . '</p>';
+                                                }
+                                                echo '<p>' . $data['temp'] . '°C, ' . '</p>';
+                                            echo '</div>';
+                                        }
+                                    } else {
+                                        echo '<p>Weather not disponible</p>';
+                                    }
+                                echo '</div>';
+
                             echo '</article>';
                         echo '</div>';
                     echo '</div>';

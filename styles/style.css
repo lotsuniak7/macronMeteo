@@ -33,7 +33,7 @@ form+form>button {
 
 .weather-sections {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: 30px;
 }
 
@@ -53,6 +53,12 @@ form+form>button {
     margin-bottom: 20px;
 }
 
+.weather-content h2 {
+    font-size: 3em;
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
 .weather-info {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -70,6 +76,13 @@ form+form>button {
     border-radius: 5px;
     background-color: #f9f9f9;
     text-align: center;
+}
+
+.section-article-temp>p:last-of-type,
+.section-article-humidity>p:last-of-type,
+.section-article-windspeed>p:last-of-type {
+    font-size: 2em;
+    font-family: bold;
 }
 
 .section-article-weather {
@@ -101,11 +114,28 @@ form+form>button {
 
 .weather-for-allday {
     grid-area: allday; /* Place dans la zone "allday" */
+    display: flex;
+    flex-direction: column;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f0f0f0;
     text-align: center;
+}
+
+.weather-forecast {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+/*.weather-forecast-item {*/
+/*    border: 1px solid #ccc;*/
+/*}*/
+
+.weather-forecast-item>p:nth-of-type(2) {
+    font-size: 1.4em;
+    font-family: bold;
 }
 
 .weather-for-week {
@@ -129,15 +159,8 @@ form+form>button {
 
 
 
-.weather-info h2 {
-    margin: 0 0 10px 0;
-    color: #333;
-}
 
-.weather-info p {
-    margin: 5px 0;
-    color: #666;
-}
+
 
 .error {
     color: red;
